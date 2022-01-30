@@ -74,9 +74,8 @@ function init() {
 
 function getMousePosition(clientX, clientY) {
     var mouse2D = new THREE.Vector3();
-    var mouse3D = new THREE.Vector3();
     mouse2D.x = (clientX / window.innerWidth) * 2 - 1;
-    mouse2D.y = -(clientY / window.innerHeight) * 2 + 1;
+    mouse2D.y = -(clientY/ window.innerHeight) * 2 + 1;
     mouse2D.z = 0.5;
     return mouse2D;
 }
@@ -87,13 +86,12 @@ function onDocumentMouseUp(event) {
     var mouse3D = getMousePosition(event.clientX, event.clientY);
     console.log(mouse3D.x + ' ' + mouse3D.y + ' ' + mouse3D.z);
 
-var vector = new THREE.Vector3( mouse3D.x, mouse3D.y, 1 );    
-    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
-
-    var intersects = raycaster.intersectObjects(scene.children );
-    if(intersects.length > 0){
-        console.log(intersects[0].object.position);
-    }
+    var vector = new THREE.Vector3( mouse3D.x, mouse3D.y, 1 );    
+    //raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+    raycaster.setFromCamera( mouse3D, camera );
+    var intersects = raycaster.intersectObjects(scene.object);
+    console.log(Math.round(intersects[0].uv.x * textureWidth) + "this is   ");
+    console.log(intersects[0].object.position);
 }
 
 

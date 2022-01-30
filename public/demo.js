@@ -2,7 +2,7 @@ import * as THREE from "https://unpkg.com/three@0.120.1/build/three.module.js";
 import { OrbitControls } from 'https://unpkg.com/three@0.120.1/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.120.1/examples/jsm/libs/stats.module.js';
 
-var camera, scene, renderer, controls, geometry, material, mesh, raycaster;
+var camera, scene, renderer, controls, geometry, material, mesh, raycaster, texture;
 
 init();
 animate();
@@ -15,10 +15,12 @@ function init() {
     camera.position.z = 2;
     scene.add(camera);
 
+    var loader = new THREE.TextureLoader();
+    texture = loader.load( 'texture/earthmap1k.jpg');
     
     geometry = new THREE.SphereGeometry(0.6, 600, 300);
     material = new THREE.MeshPhongMaterial({
-        map: THREE.ImageUtils.loadTexture('texture/earthmap1k.jpg'),
+        map: texture,
     });
 
     mesh = new THREE.Mesh(geometry, material);
@@ -46,8 +48,7 @@ function init() {
 }
 
 function getMousePosition(clientX, clientY) {
-    var mouse2D = new THREE.Vector3();
-    var mouse3D = new THREE.Vector3();
+    var mouse2D = new THREE.Vector2();
     mouse2D.x = (clientX / window.innerWidth) * 2 - 1;
     mouse2D.y = -(clientY / window.innerHeight) * 2 + 1;
     mouse2D.z = 0.5;
@@ -60,13 +61,13 @@ function onDocumentMouseUp(event) {
     var mouse3D = getMousePosition(event.clientX, event.clientY);
     console.log(mouse3D.x + ' ' + mouse3D.y + ' ' + mouse3D.z);
 
-var vector = new THREE.Vector3( mouse3D.x, mouse3D.y, 1 );    
+    var vector = new THREE.Vector3( mouse3D.x, mouse3D.y, 1 );    
     raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 
     var intersects = raycaster.intersectObjects(scene.children );
-    if(intersects.length > 0){
-        console.log(intersects[0].object.position);
-    }
+    console.log(Math.round(intersects[0].uv.x * texture.image.width) + " X axis");
+    console.log(Math.round(intersects[0].uv.y * texture.image.height) + " Y axis");
+    console.log(intersects[0].object.position);
 }
 
 function animate() {
